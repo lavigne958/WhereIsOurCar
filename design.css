@@ -1,0 +1,17 @@
+h1 {
+    border-bottom: dashed 2px #000000;
+}
+
+p {
+    font-size: 1.25rem;
+    font-weight: 300;
+    margin-bottom: 1rem;
+}
+
+.last_loc {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    margin-top: 2rem;
+    border-radius: .75rem;
+    background-color: #F5F5F5;
+}
