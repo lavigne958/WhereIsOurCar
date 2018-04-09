@@ -10,7 +10,6 @@ require_once "database_access.php";
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" href="design.css">
 </head>
-
 <body>
     <div class="container" id="accordion">
         <div class="card">
@@ -35,18 +34,20 @@ require_once "database_access.php";
                                 </div>
                                 <div class="form-group">
                                     <label for="input-addr">Street</label>
-                                    <input type="text" name="street" class="form-control" id="input-steet" aria-describedby="streetHelp" placeholder="Street" required>
+                                    <input type="text" name="street" class="form-control" id="input-steet" aria-describedby="streetHelp" placeholder="Street">
                                     <div class="invalid-feedback">
                                         Please the street name where the car is parked, no number, no symbols, ...
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label for="input-city">City</label>
-                                    <input type="text" name="city" class="form-control" id="input-city" aria-describedby="cityHelp" placeholder="City" required>
+                                    <input type="text" name="city" class="form-control" id="input-city" aria-describedby="cityHelp" placeholder="City">
                                     <div class="invalid-feedback">
                                         Please the city name where the car is parked, no number, no symbols, ...
                                     </div>
                                 </div>
+                                <input type="hidden" name="lat" id="input-lat">
+                                <input type="hidden" name="lng" id="input-lng">
                                 <button class="btn btn-primary" type="submit">Save</button>
                             </form>
                         </div>
@@ -87,6 +88,11 @@ require_once "database_access.php";
         </div>
     </div>
     <script>
+    var newPos;
+
+    function isLocationFound() {
+      return 'lat' in newPos && 'lng' in newPos;
+    }
     // Example starter JavaScript for disabling form submissions if there are invalid fields
     (function() {
         'use strict';
@@ -96,11 +102,15 @@ require_once "database_access.php";
             // Loop over them and prevent submission
             var validation = Array.prototype.filter.call(forms, function(form) {
                 form.addEventListener('submit', function(event) {
-                    if (form.checkValidity() === false) {
+                    if (form.checkValidity() === false && !isLocationFound()) {
                         console.log("form not valid");
                         event.preventDefault();
                         event.stopPropagation();
                     }
+
+                    $("#input-lat").val(newPos.lat);
+                    $("#input-lng").val(newPos.lng);
+
                     form.classList.add('was-validated');
                     console.log("form is valid");
                 });
@@ -109,14 +119,29 @@ require_once "database_access.php";
     })();
 
     function myMap() {
-        var street = "<?= $loc["street"];?>";
-        var city = "<?= $loc["city"];?>";
-        console.log("street: " + street + " city: " + city);
+        var street = "<?= ($loc["street"])?$loc["street"]: "";?>";
+        var city = "<?= ($loc["city"])?$loc["city"]:"";?>";
+        var lat = <?= ($loc["lat"])?$loc["lat"]:0;?>;
+        var lng = <?= ($loc["lng"])?$loc["lng"]:0;?>;
+
+        var geocodeOptions;
+
+        if (lat != 0 && lng != 0) {
+          geocodeOptions = {
+            'location': {
+              'lat': lat,
+              'lng': lng
+            },
+          };
+        } else {
+          geocodeOptions = {
+            'address': street + " " + city + ", France",
+          };
+        }
+
         var mapCanvas = $("#map")[0];
         geocoder = new google.maps.Geocoder();
-        geocoder.geocode({
-            'address': street + " " + city + ", France",
-        }, function(results, status) {
+        geocoder.geocode(geocodeOptions, function(results, status) {
             if (status == google.maps.GeocoderStatus.OK) {
                 var myOptions = {
                     zoom: 15,
@@ -146,8 +171,10 @@ require_once "database_access.php";
                     lng: position.coords.longitude
                 };
 
+                newPos = pos;
+
                 infoWindow.setPosition(pos);
-                infoWindow.setContent("The car is parked here");
+                infoWindow.setContent("Car position");
                 map.setCenter(pos);
             }, function() {
                 console.log("dunno");
