@@ -70,6 +70,8 @@ function load_previous_location() {
         $res = $row;
     }
 
+    echo $res;
+
     return $res;
 }
 
