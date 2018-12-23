@@ -19,7 +19,6 @@ p {
     background-color: #F5F5F5;
 }
 
-#map, #locate {
-    width: 100%;
+iframe {
     height: 400px;
 }

@@ -1,0 +1,51 @@
+<html>
+<head>
+	<meta charset='utf-8' />
+	<title>Parked map</title>
+	<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+	<link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.52.0/mapbox-gl.css' rel='stylesheet' />
+	
+	<link rel='stylesheet' href='https://tiles.unwiredmaps.com/v2/js/unwired-gl.css?v=0.1.6' />
+	<style>
+	body {
+		margin: 0px;
+		padding: 0px;
+	}
+	
+	#parkedMap {
+		position: absolute;
+		top: 0px;
+		bottom: 0px;
+		width: 100%
+	}
+	</style>
+</head>
+<body>
+	<div id='parkedMap'></div>
+    <script src="jquery_local.min.v3.3.1.js"></script>
+	<script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.52.0/mapbox-gl.js'></script>
+	<script src='https://tiles.unwiredmaps.com/v2/js/unwired-gl.js?v=0.1.6'></script>
+	<script>
+	//handler called when ajax request for last location has succeed
+	function getLastLocSucceed(data, textStatus, jqXHR) {
+		console.log("received: " + data);
+	}
+	
+	function getLastLocError(jqXHR, textStatus, error) {
+		console.log("ajax called failed [" + error + "] " + textStatus);
+	}
+	
+	
+	(function() {
+		var getLastLocUrl = location.host + "/getLastLoc.php";
+		$.ajax({
+			url: getLastLocUrl,
+			contentType: false,
+			method: "GET",
+			success: getLastLocSucceed,
+			error: getLastLocError
+		});
+	})();
+    </script>
+</body>
+</html>

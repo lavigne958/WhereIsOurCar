@@ -54,7 +54,7 @@ function store_new_location($type, $data, $who) {
 }
 
 function load_previous_location() {
-    $res;
+    $res = "";
     global $config;
 
     $mysqli = mysqli_connect("localhost", $config["user"], $config["passwd"], $config["db"]);
@@ -70,7 +70,7 @@ function load_previous_location() {
         $res = $row;
     }
 
-    echo $res;
+    echo "fetched from db" . $res;
 
     return $res;
 }
