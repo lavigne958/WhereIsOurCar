@@ -1,51 +1,90 @@
 <html>
 <head>
-	<meta charset='utf-8' />
-	<title>Parked map</title>
-	<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-	<link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.52.0/mapbox-gl.css' rel='stylesheet' />
-	
-	<link rel='stylesheet' href='https://tiles.unwiredmaps.com/v2/js/unwired-gl.css?v=0.1.6' />
-	<style>
-	body {
-		margin: 0px;
-		padding: 0px;
-	}
-	
-	#parkedMap {
-		position: absolute;
-		top: 0px;
-		bottom: 0px;
-		width: 100%
-	}
-	</style>
+    <meta charset='utf-8' />
+    <title>Parked map</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+        integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+        crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+        integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+        crossorigin=""></script>
+    <script src="config.js"></script>
+    <style>
+    body {
+        margin: 0px;
+        padding: 0px;
+    }
+    #mymap {
+        height: 400px;
+    }
+    </style>
 </head>
 <body>
-	<div id='parkedMap'></div>
-    <script src="jquery_local.min.v3.3.1.js"></script>
-	<script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.52.0/mapbox-gl.js'></script>
-	<script src='https://tiles.unwiredmaps.com/v2/js/unwired-gl.js?v=0.1.6'></script>
-	<script>
-	//handler called when ajax request for last location has succeed
-	function getLastLocSucceed(data, textStatus, jqXHR) {
-		console.log("received: " + data);
-	}
-	
-	function getLastLocError(jqXHR, textStatus, error) {
-		console.log("ajax called failed [" + error + "] " + textStatus);
-	}
-	
-	
-	(function() {
-		var getLastLocUrl = location.host + "/getLastLoc.php";
-		$.ajax({
-			url: getLastLocUrl,
-			contentType: false,
-			method: "GET",
-			success: getLastLocSucceed,
-			error: getLastLocError
-		});
-	})();
+    <div id="mymap">
+    </div>
+    <script>
+    function showError(error) {
+        switch (error.code) {
+            case error.PERMISSION_DENIED:
+            alert("permission denied");
+            break;
+
+            case error.POSITION_UNAVAILABLE:
+            alert("position unavailabe");
+            break;
+
+            case error.TIMEOUT:
+            alert("timed out");
+            break;
+
+            case error.UNKNOWN_ERROR:
+            alert("unknown error");
+            break;
+        }
+    }
+    function setPostition(position) {
+        var lat = position.coords.latitude;
+        var lon = position.coords.longitude;
+
+        console.log('Position [' + lat + ', ' + lon + ']');
+
+        mymap.setView([lat, lon], 13);
+        L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licences/by-sa/2.0/">CC-BY-SA</a>, Imagery (c) <a href="https://www.mapbox.com/">Mapbox</a>',
+            maxZoom: 18,
+            id: 'mapbox.streets',
+            accessToken: token  //declared n config.js
+        }).addTo(mymap);
+
+        var accur = position.coords.accuracy;
+        console.log('accuracy of resul: ' + accur);
+        alert("Accuracy: " + accur);
+
+        if (accur < 100) {
+            var marker = L.marker([lat, lon]).addTo(mymap);
+        } else {
+            var circle = L.circle([lat, lon], {
+                color: 'red',
+                fillColor: '#f03',
+                fillOpacity: 0.5,
+                radius: accur
+            }).addTo(mymap);
+        }
+    }
+
+    function getPosition() {
+        mymap = L.map('mymap');
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(setPostition, showError);
+        } else {
+            console.log("Geolocation is not supported");
+        }
+    }
+
+    var mymap;
+    getPosition()
     </script>
 </body>
 </html>

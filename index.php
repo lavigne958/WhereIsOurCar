@@ -41,13 +41,14 @@ require_once "database_access.php";
 									<div class="invalid-feedback">Please the city name where the car is parked, no number, no symbols, ...</div>
 								</div>
 								<input type="hidden" name="lat" id="input-lat"> <input type="hidden" name="lng" id="input-lng">
+								<button class="btn btn-secondary" type="button" onclick="getPosition()">Refresh location</button>
 								<button class="btn btn-primary" type="submit">Save</button>
 							</form>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col">
-							<div id="locate"></div>
+							<iframe height="400px" width="100%" seamless='seamless' frameBorder="0" src="parked_map.html"></iframe>
 						</div>
 					</div>
 				</div>
@@ -72,7 +73,7 @@ require_once "database_access.php";
 					</div>
 					<div class="row">
 						<div class="col">
-							<iframe height="400px" width="100%" seamless='seamless' frameBorder="0" src="parked_map.html"></iframe>
+
 						</div>
 					</div>
 				</div>
