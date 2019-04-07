@@ -24,7 +24,7 @@ require_once "database_access.php";
 				<div class="container">
 					<div class="row">
 						<div class="col">
-							<form class="needs-validation" novalidate>
+							<form class="needs-validation">
 								<div class="form-group">
 									<label for="input-name">Name</label> <input type="text" name="name" class="form-control" id="input-name"
 										aria-describedby="nameHelp" placeholder="Name" required>
@@ -40,7 +40,8 @@ require_once "database_access.php";
 										aria-describedby="cityHelp" placeholder="City">
 									<div class="invalid-feedback">Please the city name where the car is parked, no number, no symbols, ...</div>
 								</div>
-								<input type="hidden" name="lat" id="input-lat"> <input type="hidden" name="lng" id="input-lng">
+								<input type="hidden" name="lat" id="input-lat">
+								<input type="hidden" name="lng" id="input-lng">
 								<button class="btn btn-secondary" type="button" onclick="getPosition()">Refresh location</button>
 								<button class="btn btn-primary" type="submit">Save</button>
 							</form>
@@ -48,7 +49,7 @@ require_once "database_access.php";
 					</div>
 					<div class="row">
 						<div class="col">
-							<iframe height="400px" width="100%" seamless='seamless' frameBorder="0" src="parked_map.html"></iframe>
+							<iframe height="400px" width="100%" seamless='seamless' frameBorder="0" src="locator_map.html"></iframe>
 						</div>
 					</div>
 				</div>

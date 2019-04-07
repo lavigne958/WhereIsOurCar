@@ -58,8 +58,7 @@
         }).addTo(mymap);
 
         var accur = position.coords.accuracy;
-        console.log('accuracy of resul: ' + accur);
-        alert("Accuracy: " + accur);
+        console.log('accuracy: ' + accur);
 
         if (accur < 100) {
             var marker = L.marker([lat, lon]).addTo(mymap);
@@ -71,6 +70,10 @@
                 radius: accur
             }).addTo(mymap);
         }
+
+        console.log("set dom element with lat/lng");
+        window.parent.document.getElementsByName('lat')[0].value=lat;
+        window.parent.document.getElementsByName('lng')[0].value=lon;
     }
 
     function getPosition() {

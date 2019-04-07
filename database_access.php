@@ -34,7 +34,6 @@ function store_new_coordonates($data, $who) {
   $store_coo = "insert into voiture";
   $store_coo .= " (lat, lng, who)";
   $store_coo .= " values (" . $data["lat"] . ", " . $data["lng"] . ", \"" . $who . "\")";
-  echo $store_coo;
 
   $res = mysqli_query($mysqli, $store_coo);
 
@@ -85,7 +84,7 @@ function location_to_html($location) {
     return $output;
 }
 
-if (isset($_GET["name"])) {
+if (isset($_GET["name"]) && !empty($_GET["name"])) {
     $type = "";
     if (!empty($_GET["street"]) && !empty($_GET["city"])) {
       $type = "address";
