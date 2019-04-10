@@ -1,0 +1,102 @@
+<html>
+<head>
+    <meta charset='utf-8' />
+    <title>Parked map</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+        integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+        crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+        integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+        crossorigin=""></script>
+    <script src="config.js"></script>
+    <style>
+    body {
+        margin: 0px;
+        padding: 0px;
+    }
+    #mymap {
+        height: 400px;
+    }
+    </style>
+</head>
+<body>
+    <div id="mymap">
+    </div>
+    <script lang="javascript" src="jquery_local.min.v3.3.1.js"></script>
+    <script>
+    function showError(error) {
+        switch (error.code) {
+            case error.PERMISSION_DENIED:
+            alert("permission denied");
+            break;
+
+            case error.POSITION_UNAVAILABLE:
+            alert("position unavailabe");
+            break;
+
+            case error.TIMEOUT:
+            alert("timed out");
+            break;
+
+            case error.UNKNOWN_ERROR:
+            alert("unknown error");
+            break;
+        }
+    }
+
+    function successHandler(res, textStatus, xhr) {
+        console.log("Request success: "+textStatus+", "+res);
+        success = true;
+    }
+
+    function errorHandler(xhr, textStatus, error) {
+        console.log("Request failed due to: "+textStatus+", "+error);
+    }
+
+    function setPostition(res, textStatus, jqXHR) {
+        if (!success) {
+            console.log("Could not get last position");
+            return;
+        }
+
+        console.log("request completed, "+res.lat+", "+res.lng+", "+res.stree);
+
+        if (!res.lat || !res.lng) {
+            console.log("street coordonate, nothing to do here");
+            return;
+        }
+
+        //get positions from ajax request
+        var lat = res.lat;
+        var lon = res.lng;
+
+        console.log('Position [' + lat + ', ' + lon + ']');
+
+        mymap.setView([lat, lon], 13);
+        L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
+            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licences/by-sa/2.0/">CC-BY-SA</a>, Imagery (c) <a href="https://www.mapbox.com/">Mapbox</a>',
+            maxZoom: 18,
+            id: 'mapbox.streets',
+            accessToken: token  //declared n config.js
+        }).addTo(mymap);
+
+        var marker = L.marker([lat, lon]).addTo(mymap);
+    }
+
+    function getPosition() {
+        var success = false;
+        mymap = L.map('mymap');
+
+        $.ajax("getLastLoc.php", {
+            success: successHandler,
+            error: errorHandler,
+            dataType: "json"
+        }).done(setPostition);
+    }
+
+    var mymap;
+    getPosition()
+    </script>
+</body>
+</html>

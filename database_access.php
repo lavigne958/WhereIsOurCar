@@ -69,8 +69,6 @@ function load_previous_location() {
         $res = $row;
     }
 
-    echo "fetched from db" . $res;
-
     return $res;
 }
 
@@ -94,6 +92,9 @@ if (isset($_GET["name"]) && !empty($_GET["name"])) {
       $type = "coordonates";
       $data["lat"] = $_GET["lat"];
       $data["lng"] = $_GET["lng"];
+    } else {
+      error_log("Dit not received a street address neither GPS coordonates");
+      return;
     }
 
     if (!empty($type)) {
